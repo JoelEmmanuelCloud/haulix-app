@@ -3,8 +3,9 @@
 import { useState } from 'react';
 import { signIn, getSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { Truck, Lock, Eye, EyeOff } from 'lucide-react';
+import { Lock, Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function AdminLogin() {
   const [password, setPassword] = useState('');
@@ -54,8 +55,13 @@ export default function AdminLogin() {
         {/* Header */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center mb-4">
-            <Truck className="w-12 h-12 text-cyan-700 mr-3" />
-            <span className="text-3xl font-bold text-gray-900">Haulix</span>
+            <Image
+              src="/images/logo.svg"
+              alt="Haulix Logo"
+              width={240}
+              height={32}
+              className="w-auto h-16 sm:h-24 md:h-28"
+            />
           </Link>
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Admin Login</h1>
           <p className="text-gray-600">Access the admin dashboard</p>

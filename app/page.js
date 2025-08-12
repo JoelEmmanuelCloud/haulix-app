@@ -31,35 +31,35 @@ export default function HomePage() {
         <div className="relative z-10 max-w-4xl w-full">
           <div className="flex items-center justify-center mb-4 sm:mb-6">
             <Image
-              src="/images/logo.png"
+              src="/images/logo.svg"
               alt="Haulix Logo"
-              width={460}
-              height={280}
-              className="h-60 w-auto object-contain"
+              width={320}
+              height={440}
+              className="w-auto h-36 sm:h-36 md:h-48"
             />
           </div>
           
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-4 sm:mb-6 leading-tight px-2 text-white">
-                Fast, Reliable Shipping Support
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 leading-tight px-2">
+            Fast, Reliable Shipping Support
           </h2>
-          <p className="mb-6 sm:mb-8 text-base sm:text-lg md:text-xl lg:text-2x text-white max-w-2xl mx-auto px-2">
+          <p className="mb-6 sm:mb-8 text-base sm:text-lg md:text-xl lg:text-2xl text-gray-200 max-w-2xl mx-auto px-2">
             Chat with us in real-time to arrange your delivery or track your shipment instantly. Professional logistics support at your fingertips.
           </p>
           
           {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mb-8 sm:mb-12 px-2">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-stretch sm:items-center mb-8 sm:mb-12 px-2 max-w-lg mx-auto sm:max-w-none">
             <button 
               onClick={() => setShowChat(true)}
-              className="w-full sm:w-auto bg-cyan-700 hover:bg-cyan-800 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg shadow-lg transition-all duration-300 flex items-center justify-center text-base sm:text-lg font-semibold transform hover:scale-105"
+              className="w-full sm:w-auto bg-cyan-700 hover:bg-cyan-800 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg shadow-lg transition-all duration-300 flex items-center justify-center text-base sm:text-lg font-semibold transform hover:scale-105 min-h-[48px] sm:min-h-[56px]"
             >
-              <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6 mr-2" />
+              <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6 mr-2 flex-shrink-0" />
               Chat with Support
             </button>
             <a 
               href="/track" 
-              className="w-full sm:w-auto bg-amber-500 hover:bg-amber-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg shadow-lg transition-all duration-300 flex items-center justify-center text-base sm:text-lg font-semibold transform hover:scale-105"
+              className="w-full sm:w-auto bg-amber-500 hover:bg-amber-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg shadow-lg transition-all duration-300 flex items-center justify-center text-base sm:text-lg font-semibold transform hover:scale-105 min-h-[48px] sm:min-h-[56px]"
             >
-              <Search className="w-5 h-5 sm:w-6 sm:h-6 mr-2" />
+              <Search className="w-5 h-5 sm:w-6 sm:h-6 mr-2 flex-shrink-0" />
               Track Shipment
             </a>
           </div>
@@ -225,11 +225,11 @@ export default function HomePage() {
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-0">
               <Image
-                src="/images/logo.png"
+                src="/images/logo.svg"
                 alt="Haulix Logo"
                 width={180}
-                height={60}
-                className="h-24 w-auto object-contain"
+                height={20}
+                className="w-auto h-16 sm:h-28"
               />
               <span className="text-xs sm:text-sm sm:ml-2">© 2025 Professional Shipping Solutions</span>
             </div>
