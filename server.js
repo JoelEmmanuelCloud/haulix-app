@@ -3,8 +3,8 @@ const { Server } = require('socket.io');
 const next = require('next');
 
 const dev = process.env.NODE_ENV !== 'production';
-const hostname = 'localhost';
-const port = 3000;
+const hostname = '0.0.0.0'; // Changed for Render
+const port = process.env.PORT || 3000; // Use Render's PORT
 
 const app = next({ dev, hostname, port });
 const handler = app.getRequestHandler();
@@ -15,7 +15,11 @@ app.prepare().then(() => {
   const io = new Server(httpServer, {
     cors: {
       origin: process.env.NODE_ENV === 'production' 
-        ? ['https://haulix.delivery', 'https://www.haulix.delivery']
+        ? [
+            'https://haulix.delivery', 
+            'https://www.haulix.delivery',
+            process.env.RENDER_EXTERNAL_URL // Add Render URL
+          ].filter(Boolean)
         : ['http://localhost:3000'],
       methods: ['GET', 'POST'],
       credentials: true
@@ -32,7 +36,6 @@ app.prepare().then(() => {
 
   io.on('connection', (socket) => {
 
-
     // Handle customer joining chat
     socket.on('join_chat', (sessionId) => {
       socket.join(`chat_${sessionId}`);
@@ -48,7 +51,6 @@ app.prepare().then(() => {
       }
       chatRooms.get(sessionId).customers.add(socket.id);
       
-      
       // Notify admins of customer activity
       socket.to('admin_room').emit('customer_activity', {
         sessionId,
@@ -63,7 +65,6 @@ app.prepare().then(() => {
       socket.join('admin_room');
       adminClients.add(socket.id);
       connectedClients.set(socket.id, { type: 'admin' });
-      
       
       // Send current stats to admin
       socket.emit('admin_stats', {
@@ -100,7 +101,6 @@ app.prepare().then(() => {
         messageId: `msg_${Date.now()}`,
         timestamp: messageData.timestamp
       });
-
     });
 
     // Handle admin messages
@@ -128,7 +128,6 @@ app.prepare().then(() => {
         messageId: `admin_msg_${Date.now()}`,
         timestamp: messageData.timestamp
       });
-
     });
 
     // Handle typing indicators
@@ -167,7 +166,6 @@ app.prepare().then(() => {
         orderDetails,
         timestamp: new Date()
       });
-
     });
 
     // Handle order status updates
@@ -182,7 +180,6 @@ app.prepare().then(() => {
         timestamp: new Date(),
         updatedBy: 'admin'
       });
-
     });
 
     // Handle chat closure
@@ -199,7 +196,6 @@ app.prepare().then(() => {
       if (chatRooms.has(sessionId)) {
         chatRooms.delete(sessionId);
       }
-
     });
 
     // Handle admin requesting chat history
@@ -208,7 +204,6 @@ app.prepare().then(() => {
       
       try {
         // This would typically fetch from database
-        // For now, we'll send a placeholder response
         socket.emit('chat_history', {
           sessionId,
           messages: [],
@@ -234,7 +229,6 @@ app.prepare().then(() => {
       if (connection) {
         if (connection.type === 'admin') {
           adminClients.delete(socket.id);
-
         } else if (connection.type === 'customer') {
           const { sessionId } = connection;
           
@@ -257,7 +251,6 @@ app.prepare().then(() => {
             reason,
             socketId: socket.id
           });
-
         }
         
         connectedClients.delete(socket.id);
@@ -281,7 +274,6 @@ app.prepare().then(() => {
           chatRoom.lastActivity && 
           (now - chatRoom.lastActivity) > staleThreshold) {
         chatRooms.delete(sessionId);
-
       }
     }
   }, 5 * 60 * 1000); // Run every 5 minutes
@@ -291,6 +283,7 @@ app.prepare().then(() => {
       console.error(err);
       process.exit(1);
     })
-    .listen(port, () => {
+    .listen(port, hostname, () => {
+  
     });
 });
