@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Search, Package, AlertCircle, RefreshCw, ExternalLink } from 'lucide-react';
+import Link from 'next/link';
 import OrderTimeline from './OrderTimeline';
 
 export default function TrackingForm({ initialTrackingId = '', autoSubmit = false }) {
@@ -11,13 +12,6 @@ export default function TrackingForm({ initialTrackingId = '', autoSubmit = fals
   const [error, setError] = useState('');
   const [hasSearched, setHasSearched] = useState(false);
 
-  // Auto-submit if tracking ID is provided and autoSubmit is true
-  useEffect(() => {
-    if (initialTrackingId && autoSubmit) {
-      handleSubmit();
-    }
-  }, [initialTrackingId, autoSubmit]);
-
   const validateTrackingId = (id) => {
     if (!id) return 'Please enter a tracking ID';
     if (id.length < 3) return 'Tracking ID is too short';
@@ -25,7 +19,7 @@ export default function TrackingForm({ initialTrackingId = '', autoSubmit = fals
     return null;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = useCallback(async (e) => {
     if (e) e.preventDefault();
     
     const validation = validateTrackingId(trackingId.trim());
@@ -57,7 +51,14 @@ export default function TrackingForm({ initialTrackingId = '', autoSubmit = fals
     } finally {
       setLoading(false);
     }
-  };
+  }, [trackingId]);
+
+  // Auto-submit if tracking ID is provided and autoSubmit is true
+  useEffect(() => {
+    if (initialTrackingId && autoSubmit) {
+      handleSubmit();
+    }
+  }, [initialTrackingId, autoSubmit, handleSubmit]);
 
   const handleClear = () => {
     setTrackingId('');
@@ -129,7 +130,7 @@ export default function TrackingForm({ initialTrackingId = '', autoSubmit = fals
             
             {/* Tracking ID Format Help */}
             <div className="mt-2 text-sm text-gray-500">
-              <p>Haulix tracking IDs start with "HX" followed by numbers (e.g., HX1234567890)</p>
+              <p>Haulix tracking IDs start with &quot;HX&quot; followed by numbers (e.g., HX1234567890)</p>
             </div>
           </div>
 
@@ -205,7 +206,7 @@ export default function TrackingForm({ initialTrackingId = '', autoSubmit = fals
                   <p className="font-medium mb-1">Common issues:</p>
                   <ul className="list-disc list-inside space-y-1 ml-4">
                     <li>Double-check the tracking ID for typos</li>
-                    <li>Make sure you're using the complete tracking ID</li>
+                    <li>Make sure you&apos;re using the complete tracking ID</li>
                     <li>New orders may take a few minutes to appear in tracking</li>
                     <li>Contact support if the problem persists</li>
                   </ul>
@@ -222,7 +223,7 @@ export default function TrackingForm({ initialTrackingId = '', autoSubmit = fals
           <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-gray-900 mb-2">No Results Found</h3>
           <p className="text-gray-600 mb-4">
-            We couldn't find any shipment with tracking ID: <span className="font-mono font-semibold">{trackingId}</span>
+            We couldn&apos;t find any shipment with tracking ID: <span className="font-mono font-semibold">{trackingId}</span>
           </p>
           <button
             onClick={handleClear}
@@ -284,12 +285,12 @@ export default function TrackingForm({ initialTrackingId = '', autoSubmit = fals
               Have questions about your shipment? Our support team is here to help!
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <a 
+              <Link 
                 href="/"
                 className="bg-amber-500 hover:bg-amber-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors inline-flex items-center justify-center"
               >
                 Chat with Support
-              </a>
+              </Link>
               <button
                 onClick={() => {
                   const url = `/track?id=${order.trackingId}`;

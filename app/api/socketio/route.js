@@ -85,7 +85,6 @@ export function initializeSocketIO(server) {
   });
 
   io.on('connection', (socket) => {
-    console.log(`Client connected: ${socket.id}`);
 
     // Handle customer joining a chat
     socket.on('join_chat', (sessionId) => {
@@ -102,7 +101,6 @@ export function initializeSocketIO(server) {
       }
       chatRooms.get(sessionId).customers.add(socket.id);
 
-      console.log(`Customer ${socket.id} joined chat: ${sessionId}`);
       
       // Notify admins of customer activity
       socket.to('admin_room').emit('customer_activity', {
@@ -119,7 +117,6 @@ export function initializeSocketIO(server) {
       adminConnections.add(socket.id);
       activeConnections.set(socket.id, { type: 'admin' });
       
-      console.log(`Admin connected: ${socket.id}`);
       
       // Send current stats to admin
       socket.emit('admin_stats', {
@@ -157,7 +154,6 @@ export function initializeSocketIO(server) {
         timestamp: messageData.timestamp
       });
 
-      console.log(`Customer message in ${sessionId}: ${message}`);
     });
 
     // Handle admin messages
@@ -185,8 +181,6 @@ export function initializeSocketIO(server) {
         messageId: `admin_msg_${Date.now()}`,
         timestamp: messageData.timestamp
       });
-
-      console.log(`Admin message to ${sessionId}: ${message}`);
     });
 
     // Handle typing indicators
@@ -226,7 +220,6 @@ export function initializeSocketIO(server) {
         timestamp: new Date()
       });
 
-      console.log(`Order created: ${trackingId} for session ${sessionId}`);
     });
 
     // Handle order status updates
@@ -242,7 +235,7 @@ export function initializeSocketIO(server) {
         updatedBy: 'admin'
       });
 
-      console.log(`Order ${trackingId} status updated to: ${status}`);
+
     });
 
     // Handle chat closure
@@ -260,7 +253,6 @@ export function initializeSocketIO(server) {
         chatRooms.delete(sessionId);
       }
 
-      console.log(`Chat ${sessionId} closed by admin`);
     });
 
     // Handle admin requesting chat history
@@ -295,7 +287,7 @@ export function initializeSocketIO(server) {
       if (connection) {
         if (connection.type === 'admin') {
           adminConnections.delete(socket.id);
-          console.log(`Admin disconnected: ${socket.id} (${reason})`);
+
         } else if (connection.type === 'customer') {
           const { sessionId } = connection;
           
@@ -319,8 +311,7 @@ export function initializeSocketIO(server) {
             reason,
             socketId: socket.id
           });
-          
-          console.log(`Customer disconnected: ${socket.id} from session ${sessionId} (${reason})`);
+       
         }
         
         activeConnections.delete(socket.id);
@@ -344,12 +335,10 @@ export function initializeSocketIO(server) {
           chatRoom.lastActivity && 
           (now - chatRoom.lastActivity) > staleThreshold) {
         chatRooms.delete(sessionId);
-        console.log(`Cleaned up stale chat room: ${sessionId}`);
       }
     }
   }, 5 * 60 * 1000); // Run every 5 minutes
 
-  console.log('Socket.IO server initialized successfully');
   return io;
 }
 

@@ -180,7 +180,7 @@ export default function ChatWidget({ onClose }) {
               </div>
               <div>
                 <h3 className="font-bold text-gray-900">Welcome to Haulix Support</h3>
-                <p className="text-sm text-gray-600">Let's get started</p>
+                <p className="text-sm text-gray-600">Let&apos;s get started</p>
               </div>
             </div>
             <button

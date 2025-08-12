@@ -31,7 +31,7 @@ app.prepare().then(() => {
   const chatRooms = new Map();
 
   io.on('connection', (socket) => {
-    console.log('Client connected:', socket.id);
+
 
     // Handle customer joining chat
     socket.on('join_chat', (sessionId) => {
@@ -48,7 +48,6 @@ app.prepare().then(() => {
       }
       chatRooms.get(sessionId).customers.add(socket.id);
       
-      console.log(`Customer joined chat: ${sessionId}`);
       
       // Notify admins of customer activity
       socket.to('admin_room').emit('customer_activity', {
@@ -65,7 +64,6 @@ app.prepare().then(() => {
       adminClients.add(socket.id);
       connectedClients.set(socket.id, { type: 'admin' });
       
-      console.log(`Admin connected: ${socket.id}`);
       
       // Send current stats to admin
       socket.emit('admin_stats', {
@@ -103,7 +101,6 @@ app.prepare().then(() => {
         timestamp: messageData.timestamp
       });
 
-      console.log(`Customer message in ${sessionId}: ${message}`);
     });
 
     // Handle admin messages
@@ -132,7 +129,6 @@ app.prepare().then(() => {
         timestamp: messageData.timestamp
       });
 
-      console.log(`Admin message to ${sessionId}: ${message}`);
     });
 
     // Handle typing indicators
@@ -172,7 +168,6 @@ app.prepare().then(() => {
         timestamp: new Date()
       });
 
-      console.log(`Order created: ${trackingId} for session ${sessionId}`);
     });
 
     // Handle order status updates
@@ -188,7 +183,6 @@ app.prepare().then(() => {
         updatedBy: 'admin'
       });
 
-      console.log(`Order ${trackingId} status updated to: ${status}`);
     });
 
     // Handle chat closure
@@ -206,7 +200,6 @@ app.prepare().then(() => {
         chatRooms.delete(sessionId);
       }
 
-      console.log(`Chat ${sessionId} closed by admin`);
     });
 
     // Handle admin requesting chat history
@@ -241,7 +234,7 @@ app.prepare().then(() => {
       if (connection) {
         if (connection.type === 'admin') {
           adminClients.delete(socket.id);
-          console.log(`Admin disconnected: ${socket.id} (${reason})`);
+
         } else if (connection.type === 'customer') {
           const { sessionId } = connection;
           
@@ -264,8 +257,7 @@ app.prepare().then(() => {
             reason,
             socketId: socket.id
           });
-          
-          console.log(`Customer disconnected: ${socket.id} from session ${sessionId} (${reason})`);
+
         }
         
         connectedClients.delete(socket.id);
@@ -289,7 +281,7 @@ app.prepare().then(() => {
           chatRoom.lastActivity && 
           (now - chatRoom.lastActivity) > staleThreshold) {
         chatRooms.delete(sessionId);
-        console.log(`Cleaned up stale chat room: ${sessionId}`);
+
       }
     }
   }, 5 * 60 * 1000); // Run every 5 minutes
@@ -300,7 +292,5 @@ app.prepare().then(() => {
       process.exit(1);
     })
     .listen(port, () => {
-      console.log(`> Ready on http://${hostname}:${port}`);
-      console.log('Socket.IO server initialized successfully');
     });
 });
