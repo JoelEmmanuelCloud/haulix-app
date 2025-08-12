@@ -18,6 +18,7 @@ app.prepare().then(() => {
         ? [
             'https://haulix.delivery', 
             'https://www.haulix.delivery',
+            'https://haulix-app.onrender.com',
             process.env.RENDER_EXTERNAL_URL // Add Render URL
           ].filter(Boolean)
         : ['http://localhost:3000'],
