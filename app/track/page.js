@@ -1,8 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
-import ChatWidget from '../components/ChatWidget';
+import ChatWidget from '@/components/ChatWidget';
 import { Truck, MessageCircle, Search, Clock, Shield, Zap } from 'lucide-react';
 
 export default function HomePage() {
@@ -30,13 +29,8 @@ export default function HomePage() {
         {/* Content */}
         <div className="relative z-10 max-w-4xl px-4">
           <div className="flex items-center justify-center mb-6">
-            <Image
-              src="/images/logo.png"
-              alt="Haulix Logo"
-              width={464}
-              height={64}
-              className="mr-4"
-            />
+            <Truck className="w-16 h-16 text-amber-400 mr-4" />
+            <h1 className="text-6xl font-bold text-white">Haulix</h1>
           </div>
           
           <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
@@ -156,13 +150,8 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center mb-4 md:mb-0">
-              <Image
-                src="/images/logo.png"
-                alt="Haulix Logo"
-                width={224}
-                height={24}
-                className="mr-2"
-              />
+              <Truck className="w-6 h-6 text-cyan-400 mr-2" />
+              <span className="text-white font-semibold">Haulix</span>
               <span className="ml-2 text-sm">© 2025 Professional Shipping Solutions</span>
             </div>
             
