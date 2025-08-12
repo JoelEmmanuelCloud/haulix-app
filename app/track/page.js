@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { io } from 'socket.io-client';
 import { Package, Search, CheckCircle, Clock, Truck, MapPin, Home } from 'lucide-react';
@@ -34,7 +34,8 @@ const statusLabels = {
   cancelled: 'Cancelled'
 };
 
-export default function TrackPage() {
+// Separate component that uses useSearchParams
+function TrackContent() {
   const searchParams = useSearchParams();
   const [trackingId, setTrackingId] = useState(searchParams?.get('id') || '');
   const [order, setOrder] = useState(null);
@@ -286,5 +287,48 @@ export default function TrackPage() {
         </div>
       </main>
     </div>
+  );
+}
+
+// Loading component for Suspense fallback
+function TrackingPageSkeleton() {
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header Skeleton */}
+      <header className="bg-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-start">
+            <div className="w-48 h-16 bg-gray-200 rounded animate-pulse"></div>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content Skeleton */}
+      <main className="max-w-4xl mx-auto px-4 py-8">
+        <div className="text-center mb-8">
+          <div className="w-96 h-10 bg-gray-200 rounded mx-auto mb-4 animate-pulse"></div>
+          <div className="w-80 h-6 bg-gray-200 rounded mx-auto animate-pulse"></div>
+        </div>
+
+        {/* Search Form Skeleton */}
+        <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex-1">
+              <div className="w-full h-12 bg-gray-200 rounded-lg animate-pulse"></div>
+            </div>
+            <div className="w-40 h-12 bg-gray-200 rounded-lg animate-pulse"></div>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
+
+// Main export with Suspense boundary
+export default function TrackPage() {
+  return (
+    <Suspense fallback={<TrackingPageSkeleton />}>
+      <TrackContent />
+    </Suspense>
   );
 }
