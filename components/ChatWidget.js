@@ -169,29 +169,30 @@ export default function ChatWidget({ onClose }) {
     });
   };
 
+  // Mobile-optimized name input modal
   if (!isNameSet) {
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4">
-          <div className="flex items-center justify-between p-6 border-b">
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm">
+          <div className="flex items-center justify-between p-4 sm:p-6 border-b">
             <div className="flex items-center">
               <div className="bg-cyan-100 p-2 rounded-full mr-3">
-                <Headphones className="w-6 h-6 text-cyan-700" />
+                <Headphones className="w-5 h-5 sm:w-6 sm:h-6 text-cyan-700" />
               </div>
               <div>
-                <h3 className="font-bold text-gray-900">Welcome to Haulix Support</h3>
-                <p className="text-sm text-gray-600">Let&apos;s get started</p>
+                <h3 className="font-bold text-gray-900 text-sm sm:text-base">Welcome to Haulix Support</h3>
+                <p className="text-xs sm:text-sm text-gray-600">Let&apos;s get started</p>
               </div>
             </div>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 transition-colors"
+              className="text-gray-400 hover:text-gray-600 transition-colors p-1"
             >
-              <X className="w-6 h-6" />
+              <X className="w-5 h-5 sm:w-6 sm:h-6" />
             </button>
           </div>
           
-          <form onSubmit={handleNameSubmit} className="p-6">
+          <form onSubmit={handleNameSubmit} className="p-4 sm:p-6">
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 What should we call you?
@@ -201,14 +202,14 @@ export default function ChatWidget({ onClose }) {
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
                 placeholder="Enter your name"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+                className="w-full px-3 sm:px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-base"
                 autoFocus
                 required
               />
             </div>
             <button
               type="submit"
-              className="w-full bg-cyan-700 hover:bg-cyan-800 text-white py-3 rounded-lg font-semibold transition-colors"
+              className="w-full bg-cyan-700 hover:bg-cyan-800 text-white py-3 rounded-lg font-semibold transition-colors text-sm sm:text-base"
             >
               Start Chat
             </button>
@@ -228,33 +229,34 @@ export default function ChatWidget({ onClose }) {
     );
   }
 
+  // Mobile-optimized chat interface
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-end justify-end p-4 z-50">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md h-[600px] flex flex-col">
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-cyan-700 to-blue-800 text-white rounded-t-2xl">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-end justify-center sm:justify-end sm:items-end sm:p-4 z-50">
+      <div className="bg-white w-full h-full sm:w-full sm:max-w-md sm:h-[600px] sm:rounded-2xl shadow-2xl flex flex-col">
+        {/* Mobile-optimized Header */}
+        <div className="flex items-center justify-between p-3 sm:p-4 border-b bg-gradient-to-r from-cyan-700 to-blue-800 text-white sm:rounded-t-2xl">
           <div className="flex items-center">
-            <div className="bg-white bg-opacity-20 p-2 rounded-full mr-3">
-              <Headphones className="w-5 h-5" />
+            <div className="bg-white bg-opacity-20 p-1.5 sm:p-2 rounded-full mr-2 sm:mr-3">
+              <Headphones className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
             <div>
-              <h3 className="font-bold">Haulix Support</h3>
-              <div className="flex items-center text-sm opacity-90">
-                <div className={`w-2 h-2 rounded-full mr-2 ${isConnected ? 'bg-green-400' : 'bg-red-400'}`}></div>
+              <h3 className="font-bold text-sm sm:text-base">Haulix Support</h3>
+              <div className="flex items-center text-xs sm:text-sm opacity-90">
+                <div className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full mr-1.5 sm:mr-2 ${isConnected ? 'bg-green-400' : 'bg-red-400'}`}></div>
                 {isConnected ? 'Online' : 'Connecting...'}
               </div>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="text-white hover:text-gray-200 transition-colors"
+            className="text-white hover:text-gray-200 transition-colors p-1"
           >
-            <X className="w-6 h-6" />
+            <X className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
         </div>
 
-        {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {/* Mobile-optimized Messages */}
+        <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4 bg-gray-50">
           {messages.map((message) => (
             <div
               key={message.id}
@@ -263,28 +265,28 @@ export default function ChatWidget({ onClose }) {
               }`}
             >
               <div
-                className={`max-w-xs lg:max-w-md px-4 py-2 rounded-2xl ${
+                className={`max-w-[85%] sm:max-w-xs lg:max-w-md px-3 sm:px-4 py-2 rounded-2xl ${
                   message.sender === 'customer'
                     ? 'bg-cyan-700 text-white'
                     : message.sender === 'system'
                     ? 'bg-amber-100 text-amber-800 border border-amber-200'
-                    : 'bg-gray-100 text-gray-900'
+                    : 'bg-white text-gray-900 border border-gray-200'
                 }`}
               >
                 {message.sender === 'admin' && (
                   <div className="flex items-center mb-1">
-                    <User className="w-4 h-4 mr-1" />
+                    <User className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                     <span className="text-xs font-medium">Support Agent</span>
                   </div>
                 )}
                 
-                <p className="text-sm">{message.message}</p>
+                <p className="text-sm leading-relaxed break-words">{message.message}</p>
                 
                 {message.trackingId && (
                   <div className="mt-2 p-2 bg-white bg-opacity-20 rounded-lg">
                     <div className="flex items-center text-xs">
-                      <Package className="w-4 h-4 mr-1" />
-                      <span>Tracking: {message.trackingId}</span>
+                      <Package className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+                      <span className="break-all">Tracking: {message.trackingId}</span>
                     </div>
                     <button
                       onClick={() => window.open(`/track?id=${message.trackingId}`, '_blank')}
@@ -306,7 +308,7 @@ export default function ChatWidget({ onClose }) {
           
           {isTyping && (
             <div className="flex justify-start">
-              <div className="bg-gray-100 px-4 py-2 rounded-2xl">
+              <div className="bg-white px-3 sm:px-4 py-2 rounded-2xl border border-gray-200">
                 <div className="flex items-center space-x-1">
                   <div className="flex space-x-1">
                     <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
@@ -322,23 +324,23 @@ export default function ChatWidget({ onClose }) {
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Input */}
-        <form onSubmit={handleSendMessage} className="p-4 border-t">
+        {/* Mobile-optimized Input */}
+        <form onSubmit={handleSendMessage} className="p-3 sm:p-4 border-t bg-white sm:rounded-b-2xl">
           <div className="flex space-x-2">
             <input
               type="text"
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               placeholder="Type your message..."
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+              className="flex-1 px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-full focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-sm sm:text-base"
               disabled={!isConnected}
             />
             <button
               type="submit"
               disabled={!newMessage.trim() || !isConnected}
-              className="bg-cyan-700 hover:bg-cyan-800 disabled:bg-gray-300 text-white p-2 rounded-full transition-colors"
+              className="bg-cyan-700 hover:bg-cyan-800 disabled:bg-gray-300 text-white p-2 sm:p-2.5 rounded-full transition-colors flex-shrink-0"
             >
-              <Send className="w-5 h-5" />
+              <Send className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
           </div>
           <p className="text-xs text-gray-500 mt-2 text-center">
