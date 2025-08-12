@@ -3,8 +3,8 @@ const { Server } = require('socket.io');
 const next = require('next');
 
 const dev = process.env.NODE_ENV !== 'production';
-const hostname = '0.0.0.0'; // Changed for Render
-const port = process.env.PORT || 3000; // Use Render's PORT
+const hostname = '0.0.0.0';
+const port = process.env.PORT || 10000; // Render uses port 10000
 
 const app = next({ dev, hostname, port });
 const handler = app.getRequestHandler();
@@ -16,11 +16,10 @@ app.prepare().then(() => {
     cors: {
       origin: process.env.NODE_ENV === 'production' 
         ? [
-            'https://haulix.delivery', 
-            'https://www.haulix.delivery',
             'https://haulix-app.onrender.com',
-            process.env.RENDER_EXTERNAL_URL // Add Render URL
-          ].filter(Boolean)
+            'https://haulix.delivery',
+            'https://www.haulix.delivery'
+          ]
         : ['http://localhost:3000'],
       methods: ['GET', 'POST'],
       credentials: true
@@ -36,6 +35,7 @@ app.prepare().then(() => {
   const chatRooms = new Map();
 
   io.on('connection', (socket) => {
+    console.log('Client connected:', socket.id);
 
     // Handle customer joining chat
     socket.on('join_chat', (sessionId) => {
@@ -204,7 +204,6 @@ app.prepare().then(() => {
       const { sessionId } = data;
       
       try {
-        // This would typically fetch from database
         socket.emit('chat_history', {
           sessionId,
           messages: [],
@@ -225,6 +224,7 @@ app.prepare().then(() => {
 
     // Handle disconnect
     socket.on('disconnect', (reason) => {
+      console.log('Client disconnected:', socket.id, 'Reason:', reason);
       const connection = connectedClients.get(socket.id);
       
       if (connection) {
@@ -281,10 +281,11 @@ app.prepare().then(() => {
 
   httpServer
     .once('error', (err) => {
-      console.error(err);
+      console.error('Server error:', err);
       process.exit(1);
     })
     .listen(port, hostname, () => {
-  
+      console.log(`Server running on http://${hostname}:${port}`);
+      console.log(`Socket.IO server ready`);
     });
 });
