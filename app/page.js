@@ -40,11 +40,11 @@ export default function HomePage() {
           </div>
           
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-4 sm:mb-6 leading-tight px-2 text-white">
-  Fast, Reliable Shipping Support
-</h2>
-<p className="mb-6 sm:mb-8 text-base sm:text-lg md:text-xl lg:text-2x text-white max-w-2xl mx-auto px-2">
-  Chat with us in real-time to arrange your delivery or track your shipment instantly. Professional logistics support at your fingertips.
-</p>
+                Fast, Reliable Shipping Support
+          </h2>
+          <p className="mb-6 sm:mb-8 text-base sm:text-lg md:text-xl lg:text-2x text-white max-w-2xl mx-auto px-2">
+            Chat with us in real-time to arrange your delivery or track your shipment instantly. Professional logistics support at your fingertips.
+          </p>
           
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mb-8 sm:mb-12 px-2">
