@@ -523,7 +523,7 @@ export default function AdminDashboard() {
                     src="/images/logo.svg"
                     alt="Haulix Logo"
                     width={120}
-                    height={16}
+                    height={80}
                     className="w-auto h-16 mr-2"
                   />
                 </Link>

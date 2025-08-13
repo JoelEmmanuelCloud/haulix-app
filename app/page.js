@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import Navigation from '../components/Navigation';
+import Footer from '../components/Footer';
 import ChatWidget from '../components/ChatWidget';
 import { Truck, MessageCircle, Search, Clock, Shield, Zap, Award, Users, Globe } from 'lucide-react';
 
@@ -18,8 +20,10 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen">
+      <Navigation />
+      
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center text-center text-white overflow-hidden px-4 py-8">
+      <section className="relative min-h-screen flex items-center justify-center text-center text-white overflow-hidden px-4 py-8 pt-24 sm:pt-28">
         {/* Background Image */}
         <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600"></div>
         <div 
@@ -219,35 +223,8 @@ export default function HomePage() {
       {/* Chat Widget */}
       {showChat && <ChatWidget onClose={() => setShowChat(false)} />}
 
-      {/* Admin Access Link - Subtle Footer */}
-      <footer className="bg-gray-900 text-gray-400 py-6 sm:py-8">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-0">
-              <Image
-                src="/images/logo.svg"
-                alt="Haulix Logo"
-                width={180}
-                height={20}
-                className="w-auto h-16 sm:h-28"
-              />
-              <span className="text-xs sm:text-sm sm:ml-2">© 2025 Professional Shipping Solutions</span>
-            </div>
-            
-            <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
-              <span className="text-xs sm:text-sm text-center">Need support? Chat with us above!</span>
-              <div className="border-t sm:border-t-0 sm:border-l border-gray-700 pt-4 sm:pt-0 sm:pl-6">
-                <a 
-                  href="/admin/login"
-                  className="text-gray-500 hover:text-gray-300 text-xs sm:text-sm transition-colors"
-                >
-                  Staff Login
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </footer>
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }

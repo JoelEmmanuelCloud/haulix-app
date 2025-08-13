@@ -126,14 +126,14 @@ function TrackContent() {
       {/* Mobile-Optimized Header */}
       <header className="bg-white shadow-sm sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
-          <div className="flex items-center justify-center sm:justify-start">
+          <div className="flex items-center justify-start sm:justify-start">
             <Link href="/" className="flex items-center hover:opacity-80 transition-opacity">
               <Image
                 src="/images/logo.svg"
                 alt="Haulix Logo"
                 width={120}
                 height={16}
-                className="w-auto h-8 sm:h-12 md:h-16"
+                className="w-auto h-16 sm:h-12 md:h-16"
               />
             </Link>
           </div>
