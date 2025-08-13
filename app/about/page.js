@@ -97,12 +97,12 @@ export default function About() {
               </div>
             </div>
             <div className="relative">
-              <img 
-                src="https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
-                alt="Modern logistics facility with trucks and cargo" 
+            <img 
+                src="https://images.pexels.com/photos/4487361/pexels-photo-4487361.jpeg" 
+                alt="Warehouse workers carrying boxes" 
                 className="rounded-2xl shadow-xl w-full h-96 object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-2xl"></div>
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-2xl"></div>
             </div>
           </div>
         </div>
@@ -189,16 +189,16 @@ export default function About() {
               <p className="text-gray-300 text-sm">15+ years in international logistics, former VP at DHL Europe</p>
             </div>
             
-            <div className="text-center">
-              <img 
-                src="https://images.unsplash.com/photo-1494790108755-2616c2d39912?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" 
-                alt="COO Portrait" 
-                className="w-32 h-32 rounded-full mx-auto mb-6 object-cover shadow-lg"
-              />
-              <h3 className="text-xl font-bold mb-2">Maria Rodriguez</h3>
-              <p className="text-cyan-400 mb-3">Chief Operations Officer</p>
-              <p className="text-gray-300 text-sm">12+ years optimizing global supply chains and logistics networks</p>
-            </div>
+           <div className="text-center">
+  <img
+    src="https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=400"
+    alt="COO Portrait"
+    className="w-32 h-32 rounded-full mx-auto mb-6 object-cover shadow-lg"
+  />
+  <h3 className="text-xl font-bold mb-2">Maria Rodriguez</h3>
+  <p className="text-cyan-400 mb-3">Chief Operations Officer</p>
+  <p className="text-gray-300 text-sm">12+ years optimizing global supply chains and logistics networks</p>
+</div>
             
             <div className="text-center sm:col-span-2 lg:col-span-1">
               <img 
