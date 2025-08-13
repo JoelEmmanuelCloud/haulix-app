@@ -26,7 +26,7 @@ export default function Navigation() {
               alt="Haulix Logo"
               width={120}
               height={40}
-              className="w-auto h-16 sm:h-28"
+              className="w-auto h-36 sm:h-36 md:h-48"
             />
           </Link>
 
