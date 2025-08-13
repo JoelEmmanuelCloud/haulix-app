@@ -129,7 +129,7 @@ function TrackContent() {
           <div className="flex items-center justify-start sm:justify-start">
             <Link href="/" className="flex items-center hover:opacity-80 transition-opacity">
               <Image
-                src="/images/logo.svg"
+                src="/images/logo1.svg"
                 alt="Haulix Logo"
                 width={120}
                 height={16}

@@ -22,11 +22,11 @@ export default function Navigation() {
           {/* Logo */}
           <Link href="/" className="flex items-center">
             <Image
-              src="/images/logo.svg"
+              src="/images/logo1.svg"
               alt="Haulix Logo"
               width={120}
               height={40}
-              className="w-auto h-16 sm:h-24"
+              className="w-auto h-16 sm:h-28"
             />
           </Link>
 

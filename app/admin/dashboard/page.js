@@ -520,7 +520,7 @@ export default function AdminDashboard() {
               <div className="flex items-center">
                 <Link href="/" className="hover:opacity-80 transition-opacity">
                   <Image
-                    src="/images/logo.svg"
+                    src="/images/logo1.svg"
                     alt="Haulix Logo"
                     width={120}
                     height={80}
