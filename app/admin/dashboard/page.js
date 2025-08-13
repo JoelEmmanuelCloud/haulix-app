@@ -20,7 +20,13 @@ import {
   X,
   ChevronDown,
   Search,
-  Filter
+  Filter,
+  Mail,
+  Paperclip,
+  Trash2,
+  Upload,
+  FileText,
+  Image as ImageIcon
 } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
 import Link from 'next/link';
@@ -36,6 +42,7 @@ export default function AdminDashboard() {
   const [selectedChat, setSelectedChat] = useState(null);
   const [newMessage, setNewMessage] = useState('');
   const [showOrderForm, setShowOrderForm] = useState(false);
+  const [showEmailModal, setShowEmailModal] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [orderForm, setOrderForm] = useState({
@@ -44,6 +51,18 @@ export default function AdminDashboard() {
     pickupAddress: '',
     estimatedDelivery: ''
   });
+
+  // Email form state
+  const [emailForm, setEmailForm] = useState({
+    to: '',
+    cc: '',
+    bcc: '',
+    subject: '',
+    message: '',
+    attachments: []
+  });
+  const [emailSending, setEmailSending] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
 
   // Check if mobile
   useEffect(() => {
@@ -307,6 +326,134 @@ export default function AdminDashboard() {
     }
   };
 
+  // Email functions
+  const handleFileUpload = (files) => {
+    const fileArray = Array.from(files);
+    const maxSize = 25 * 1024 * 1024; // 25MB limit for SendGrid
+    const validFiles = [];
+    
+    fileArray.forEach(file => {
+      if (file.size > maxSize) {
+        toast.error(`File ${file.name} is too large. Max size is 25MB.`);
+        return;
+      }
+      
+      // Check if file already exists
+      const exists = emailForm.attachments.some(att => 
+        att.name === file.name && att.size === file.size
+      );
+      
+      if (!exists) {
+        validFiles.push({
+          file: file,
+          name: file.name,
+          size: file.size,
+          type: file.type
+        });
+      }
+    });
+    
+    if (validFiles.length > 0) {
+      setEmailForm(prev => ({
+        ...prev,
+        attachments: [...prev.attachments, ...validFiles]
+      }));
+    }
+  };
+
+  const removeAttachment = (index) => {
+    setEmailForm(prev => ({
+      ...prev,
+      attachments: prev.attachments.filter((_, i) => i !== index)
+    }));
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setDragOver(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    setDragOver(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setDragOver(false);
+    const files = e.dataTransfer.files;
+    handleFileUpload(files);
+  };
+
+  const sendEmail = async (e) => {
+    e.preventDefault();
+    
+    if (!emailForm.to.trim() || !emailForm.subject.trim()) {
+      toast.error('Please fill in recipient and subject fields');
+      return;
+    }
+
+    setEmailSending(true);
+
+    try {
+      const formData = new FormData();
+      formData.append('to', emailForm.to);
+      formData.append('cc', emailForm.cc);
+      formData.append('bcc', emailForm.bcc);
+      formData.append('subject', emailForm.subject);
+      formData.append('message', emailForm.message);
+
+      // Add attachments
+      emailForm.attachments.forEach((attachment, index) => {
+        formData.append(`attachments`, attachment.file);
+      });
+
+      const response = await fetch('/api/send-email', {
+        method: 'POST',
+        body: formData
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        toast.success('Email sent successfully!');
+        
+        // Reset form
+        setEmailForm({
+          to: '',
+          cc: '',
+          bcc: '',
+          subject: '',
+          message: '',
+          attachments: []
+        });
+        setShowEmailModal(false);
+      } else {
+        toast.error(result.error || 'Failed to send email');
+      }
+    } catch (error) {
+      console.error('Error sending email:', error);
+      toast.error('Error sending email');
+    } finally {
+      setEmailSending(false);
+    }
+  };
+
+  const formatFileSize = (bytes) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
+  const getFileIcon = (type) => {
+    if (type.startsWith('image/')) {
+      return <ImageIcon className="w-4 h-4" />;
+    }
+    return <FileText className="w-4 h-4" />;
+  };
+
   const formatTime = (timestamp) => {
     return new Date(timestamp).toLocaleTimeString([], { 
       hour: '2-digit', 
@@ -388,6 +535,15 @@ export default function AdminDashboard() {
             )}
             
             <div className="flex items-center space-x-2">
+              {/* Email button */}
+              <button
+                onClick={() => setShowEmailModal(true)}
+                className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+                title="Send Email"
+              >
+                <Mail className="w-5 h-5" />
+              </button>
+              
               {/* Mobile menu button */}
               <button
                 onClick={() => setShowMobileMenu(!showMobileMenu)}
@@ -445,6 +601,16 @@ export default function AdminDashboard() {
               
               <div className="space-y-4">
                 <div className="text-sm text-gray-600">Welcome, Admin</div>
+                <button
+                  onClick={() => {
+                    setShowEmailModal(true);
+                    setShowMobileMenu(false);
+                  }}
+                  className="flex items-center w-full text-gray-700 hover:text-gray-900"
+                >
+                  <Mail className="w-5 h-5 mr-3" />
+                  Send Email
+                </button>
                 <button
                   onClick={() => signOut({ callbackUrl: '/admin/login' })}
                   className="flex items-center w-full text-gray-700 hover:text-gray-900"
@@ -656,13 +822,29 @@ export default function AdminDashboard() {
                                 <h4 className="font-semibold">{selectedChat.customerName}</h4>
                                 <p className="text-sm text-gray-600">Session: {selectedChat.sessionId}</p>
                               </div>
-                              <button
-                                onClick={() => setShowOrderForm(!showOrderForm)}
-                                className="bg-cyan-700 hover:bg-cyan-800 text-white px-4 py-2 rounded-lg text-sm flex items-center"
-                              >
-                                <Plus className="w-4 h-4 mr-1" />
-                                Create Order
-                              </button>
+                              <div className="flex space-x-2">
+                                <button
+                                  onClick={() => {
+                                    setEmailForm(prev => ({
+                                      ...prev,
+                                      to: selectedChat.customerEmail || '',
+                                      subject: `Regarding your order - ${selectedChat.customerName}`
+                                    }));
+                                    setShowEmailModal(true);
+                                  }}
+                                  className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm flex items-center"
+                                >
+                                  <Mail className="w-4 h-4 mr-1" />
+                                  Email
+                                </button>
+                                <button
+                                  onClick={() => setShowOrderForm(!showOrderForm)}
+                                  className="bg-cyan-700 hover:bg-cyan-800 text-white px-3 py-2 rounded-lg text-sm flex items-center"
+                                >
+                                  <Plus className="w-4 h-4 mr-1" />
+                                  Create Order
+                                </button>
+                              </div>
                             </div>
                           </div>
 
@@ -828,9 +1010,22 @@ export default function AdminDashboard() {
                               <td className="py-3 px-4">
                                 <button
                                   onClick={() => window.open(`/track?id=${order.trackingId}`, '_blank')}
-                                  className="text-cyan-600 hover:text-cyan-800 text-sm"
+                                  className="text-cyan-600 hover:text-cyan-800 text-sm mr-3"
                                 >
                                   View →
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    setEmailForm(prev => ({
+                                      ...prev,
+                                      to: order.customerEmail || '',
+                                      subject: `Update on your order ${order.trackingId}`
+                                    }));
+                                    setShowEmailModal(true);
+                                  }}
+                                  className="text-blue-600 hover:text-blue-800 text-sm"
+                                >
+                                  <Mail className="w-4 h-4 inline" />
                                 </button>
                               </td>
                             </tr>
@@ -950,6 +1145,250 @@ export default function AdminDashboard() {
                   </button>
                 </div>
               </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Email Modal */}
+      {showEmailModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          {/* Mobile: Full screen on small devices, modal on larger screens */}
+          <div className={`bg-white shadow-xl w-full h-full overflow-y-auto lg:w-full lg:max-w-2xl lg:max-h-[90vh] lg:rounded-lg lg:h-auto ${
+            isMobile ? '' : 'rounded-lg'
+          }`}>
+            {/* Header - Sticky on mobile */}
+            <div className={`bg-white border-b p-4 ${isMobile ? 'sticky top-0 z-10' : ''}`}>
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold flex items-center">
+                  <Mail className="w-5 h-5 mr-2" />
+                  Send Email
+                </h3>
+                <button
+                  onClick={() => setShowEmailModal(false)}
+                  className="p-2 text-gray-400 hover:text-gray-600"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+            
+            {/* Form Content */}
+            <div className="p-4">
+              <form onSubmit={sendEmail} className="space-y-4">
+                {/* Essential Fields Section */}
+                <div className="space-y-4">
+                  {/* To Field */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      To *
+                    </label>
+                    <input
+                      type="email"
+                      value={emailForm.to}
+                      onChange={(e) => setEmailForm({...emailForm, to: e.target.value})}
+                      placeholder="recipient@example.com"
+                      className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-base"
+                      required
+                    />
+                  </div>
+                  
+                  {/* Subject Field */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Subject *
+                    </label>
+                    <input
+                      type="text"
+                      value={emailForm.subject}
+                      onChange={(e) => setEmailForm({...emailForm, subject: e.target.value})}
+                      placeholder="Email subject"
+                      className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-base"
+                      required
+                    />
+                  </div>
+                </div>
+
+                {/* Advanced Fields - Collapsible on mobile */}
+                <details className="group">
+                  <summary className="flex items-center justify-between cursor-pointer text-sm font-medium text-gray-700 py-2">
+                    <span>Advanced Options</span>
+                    <ChevronDown className="w-4 h-4 transform group-open:rotate-180 transition-transform" />
+                  </summary>
+                  <div className="space-y-4 mt-2 pt-2 border-t border-gray-100">
+                    {/* CC Field */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        CC
+                      </label>
+                      <input
+                        type="email"
+                        value={emailForm.cc}
+                        onChange={(e) => setEmailForm({...emailForm, cc: e.target.value})}
+                        placeholder="cc@example.com"
+                        className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-base"
+                      />
+                    </div>
+                    
+                    {/* BCC Field */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        BCC
+                      </label>
+                      <input
+                        type="email"
+                        value={emailForm.bcc}
+                        onChange={(e) => setEmailForm({...emailForm, bcc: e.target.value})}
+                        placeholder="bcc@example.com"
+                        className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-base"
+                      />
+                    </div>
+                  </div>
+                </details>
+                
+                {/* Message Field */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Message
+                  </label>
+                  <textarea
+                    value={emailForm.message}
+                    onChange={(e) => setEmailForm({...emailForm, message: e.target.value})}
+                    placeholder="Your message here..."
+                    className={`w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-base resize-none ${
+                      isMobile ? 'h-32' : 'h-24'
+                    }`}
+                    rows={isMobile ? "4" : "3"}
+                  />
+                </div>
+                
+                {/* File Upload Section */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Attachments
+                  </label>
+                  
+                  {/* Mobile-optimized upload area */}
+                  <div
+                    className={`border-2 border-dashed rounded-lg text-center transition-colors ${
+                      isMobile ? 'p-4' : 'p-6'
+                    } ${
+                      dragOver 
+                        ? 'border-blue-500 bg-blue-50' 
+                        : 'border-gray-300 hover:border-gray-400'
+                    }`}
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onDrop={handleDrop}
+                  >
+                    <Upload className={`mx-auto text-gray-400 mb-2 ${isMobile ? 'w-6 h-6' : 'w-8 h-8'}`} />
+                    <p className={`text-gray-600 mb-2 ${isMobile ? 'text-xs' : 'text-sm'}`}>
+                      {isMobile ? 'Tap to select files' : 'Drag and drop files here, or click to select'}
+                    </p>
+                    <input
+                      type="file"
+                      multiple
+                      onChange={(e) => handleFileUpload(e.target.files)}
+                      className="hidden"
+                      id="file-upload"
+                    />
+                    <label
+                      htmlFor="file-upload"
+                      className={`bg-blue-600 hover:bg-blue-700 text-white rounded-lg cursor-pointer inline-flex items-center ${
+                        isMobile ? 'px-3 py-2 text-sm' : 'px-4 py-2 text-sm'
+                      }`}
+                    >
+                      <Paperclip className="w-4 h-4 mr-1" />
+                      {isMobile ? 'Add Files' : 'Choose Files'}
+                    </label>
+                    <p className="text-xs text-gray-500 mt-2">
+                      Max: 25MB per file
+                    </p>
+                  </div>
+                  
+                  {/* Mobile-optimized attachment list */}
+                  {emailForm.attachments.length > 0 && (
+                    <div className="mt-4 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <p className="text-sm font-medium text-gray-700">
+                          Files ({emailForm.attachments.length})
+                        </p>
+                        {emailForm.attachments.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => setEmailForm(prev => ({ ...prev, attachments: [] }))}
+                            className="text-xs text-red-600 hover:text-red-800"
+                          >
+                            Remove All
+                          </button>
+                        )}
+                      </div>
+                      
+                      {/* Compact file list for mobile */}
+                      <div className={`space-y-2 ${isMobile && emailForm.attachments.length > 3 ? 'max-h-32 overflow-y-auto' : ''}`}>
+                        {emailForm.attachments.map((attachment, index) => (
+                          <div key={index} className={`flex items-center justify-between bg-gray-50 rounded-lg ${
+                            isMobile ? 'p-2' : 'p-3'
+                          }`}>
+                            <div className="flex items-center space-x-2 flex-1 min-w-0">
+                              {getFileIcon(attachment.type)}
+                              <div className="min-w-0 flex-1">
+                                <p className={`font-medium text-gray-900 truncate ${
+                                  isMobile ? 'text-sm' : 'text-sm'
+                                }`}>
+                                  {attachment.name}
+                                </p>
+                                <p className="text-xs text-gray-500">
+                                  {formatFileSize(attachment.size)}
+                                </p>
+                              </div>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => removeAttachment(index)}
+                              className="text-red-500 hover:text-red-700 p-1 ml-2 flex-shrink-0"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </form>
+            </div>
+            
+            {/* Action Buttons - Sticky on mobile */}
+            <div className={`bg-white border-t p-4 ${isMobile ? 'sticky bottom-0' : ''}`}>
+              <div className="flex flex-col gap-3">
+                <button
+                  type="submit"
+                  onClick={sendEmail}
+                  disabled={emailSending || !emailForm.to.trim() || !emailForm.subject.trim()}
+                  className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white px-4 py-3 rounded-lg flex items-center justify-center font-medium"
+                >
+                  {emailSending ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-4 h-4 mr-2" />
+                      Send Email
+                    </>
+                  )}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowEmailModal(false)}
+                  className="w-full px-4 py-3 text-gray-600 hover:text-gray-800 border border-gray-300 rounded-lg font-medium"
+                  disabled={emailSending}
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           </div>
         </div>
